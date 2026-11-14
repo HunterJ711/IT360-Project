@@ -1,0 +1,37 @@
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+from .detector import detect
+from .evidence import describe_evidence
+from .parser import parse_events
+from .report import generate_report
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="evitriage", description="Evidence-preserving security log triage")
+    commands = parser.add_subparsers(dest="command", required=True)
+    analyze = commands.add_parser("analyze", help="Analyze normalized CSV or JSON evidence")
+    analyze.add_argument("evidence", help="Path to evidence file")
+    analyze.add_argument("--output", "-o", default="reports/evitriage_report.md", help="Markdown report path")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    try:
+        evidence = describe_evidence(args.evidence)
+        events = parse_events(args.evidence)
+        findings = detect(events)
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(generate_report(evidence, events, findings), encoding="utf-8")
+    except (OSError, ValueError) as exc:
+        print(f"EviTriage error: {exc}")
+        return 2
+
+    print(f"Analyzed {len(events)} events and produced {len(findings)} findings.")
+    print(f"Report written to {output}")
+    return 0
+

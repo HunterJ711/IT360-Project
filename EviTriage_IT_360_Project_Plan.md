@@ -48,8 +48,8 @@ The project will be considered successful if:
 5. AI produces useful explanations and investigation suggestions for selected findings.
 6. Reports clearly distinguish source evidence, deterministic rule results, and AI interpretation.
 7. Malformed input and missing fields are handled without silently changing evidence.
-8. The public GitHub repository includes source code, a README, dependencies, sample data, the final PDF report, and a presentation link.
-9. A 10–15 minute video successfully explains and demonstrates the tool.
+8. The public GitHub repository includes source code, a README, dependencies, sample data, the final PDF report, and `docs/presentation_slides.pdf`.
+9. Both team members deliver a clear 10–15 minute in-person presentation with a working live demonstration and backup screenshots.
 
 ### Project Dates
 
@@ -79,7 +79,7 @@ The instructor defines academic expectations, provides guidance, and evaluates t
 | IT 360 Instructor | Sponsor / Evaluator | Define requirements, provide academic guidance, and evaluate deliverables |
 | Authorized Lab / Sample Evidence Users | Test Users | Provide permitted evidence and feedback for testing and demonstration |
 
-Both students will participate in architecture, code review, debugging, final report writing, and the recorded demonstration. Ownership may overlap to avoid a single point of failure.
+Both students will participate in architecture, code review, debugging, final report writing, and the in-person presentation. Each student will speak and understand the portion presented. Ownership may overlap to avoid a single point of failure.
 
 ---
 
@@ -181,10 +181,11 @@ Authorized or Synthetic Log Evidence
 | October 2 | Parser and normalization | Extract timestamps, users, hosts, event IDs, sources, actions, and outcomes into common records. |
 | October 16 | Detection rules | Implement and test at least four suspicious-event patterns and severity logic. |
 | October 30 | Correlation and timeline | Group related events and generate a chronological incident timeline. |
-| November 13 | AI and reporting integration | Generate labeled AI explanations, incident summaries, investigation steps, and a complete report. |
-| November 20 | Testing and debugging | Test known-good, suspicious, malformed, and incomplete datasets; correct major defects. |
-| November 30 | Documentation | Finish the README, setup instructions, examples, screenshots, results, lessons learned, and final PDF report. |
-| December 2 | Presentation | Record the 10–15 minute walkthrough and live demonstration; add the video link to the README. |
+| November 14 | Offline MVP | Complete evidence hashing, normalization, four detection patterns, timeline generation, reporting, sample evidence, and automated tests. |
+| November 20 | AI and reporting integration | Add labeled Sushi AI incident summaries and investigation steps while retaining offline fallback behavior. |
+| November 25 | Testing and debugging | Test known-good, suspicious, malformed, and incomplete datasets; correct major defects. |
+| November 30 | Documentation | Finish the README, setup instructions, examples, screenshots, results, lessons learned, final PDF report, and presentation slides. |
+| Before presentation day | Presentation rehearsal | Test the live demonstration, classroom equipment, timing, speaking roles, and backup screenshots. |
 | December 3 | Project completion | Finalize the public repository, add the instructor as a collaborator, and complete the submission review. |
 
 ---
@@ -219,7 +220,6 @@ Authorized or Synthetic Log Evidence
 | Sample or synthetic log evidence | $0 |
 | Windows VM or course lab | $0 |
 | AI service | $0–$20 |
-| OBS Studio or recording software | $0 |
 | **Estimated Total** | **$0–$20** |
 
 The team will prioritize free and open-source resources whenever possible.
@@ -235,7 +235,6 @@ The team will prioritize free and open-source resources whenever possible.
 - An approved AI API or model and its client library.
 - An authorized Windows VM, course lab, or synthetic evidence.
 - Markdown or HTML report output.
-- OBS Studio or equivalent recording software.
 
 ### Project Dependencies
 
@@ -287,7 +286,8 @@ The team will review the schedule weekly and record major progress through GitHu
 | Fix major defects | Hunter / Will | November 25 | Yes |
 | Complete README and final PDF report | Hunter / Will | November 30 | Yes |
 | Prepare demonstration dataset | Hunter | December 1 | Yes |
-| Record presentation and add video link | Hunter / Will | December 2 | Yes |
+| Create 8–12 slides and export `docs/presentation_slides.pdf` | Hunter / Will | November 30 | Yes |
+| Rehearse the in-person presentation and live demonstration | Hunter / Will | Before presentation day | Yes |
 | Add instructor and review public repository | Hunter / Will | December 3 | Yes |
 
 Items marked **Yes** under GSD Sync can be pushed to the main GSD inbox for tracking.
@@ -315,7 +315,7 @@ Items marked **Yes** under GSD Sync can be pushed to the main GSD inbox for trac
 - Architecture decisions and code review.
 - Debugging, integration, and functional testing.
 - Final written report.
-- Presentation preparation and recording.
+- Presentation preparation, speaking-role practice, and live-demo rehearsal.
 - Final repository and submission review.
 
 This division provides clear ownership while allowing both team members to understand and contribute to the complete application.
@@ -358,8 +358,8 @@ The following features may be considered only after the MVP is complete, tested,
 - A public GitHub repository with the instructor added as a collaborator.
 - A functional digital-forensics programming project worth 75 points.
 - A detailed PDF report covering the introduction, technical implementation, results, and lessons learned/conclusion, worth 45 points.
-- A professional 10–15 minute video presentation with a live demonstration, worth 30 points.
-- A comprehensive `README.md` containing the project overview, features, setup instructions, usage instructions, and video link.
+- An 8–12 slide deck saved as `docs/presentation_slides.pdf` and a professional 10–15 minute in-person presentation with a live demonstration, worth 30 points per student.
+- A comprehensive `README.md` containing the project overview, features, setup instructions, and usage instructions.
 
 ---
 
@@ -367,5 +367,5 @@ The following features may be considered only after the MVP is complete, tested,
 
 EviTriage will be considered complete when it reliably processes authorized or synthetic security-log evidence, preserves the source file and its hash, normalizes events, detects defined suspicious patterns, builds an incident timeline, uses AI as a clearly labeled advisory layer, and produces a readable forensic incident report.
 
-The public repository must contain clean source code, documented dependencies, sample evidence, a comprehensive README, the final PDF report, and the presentation link. The tool must be tested, demonstrable, and useful even when the AI service is unavailable. Optional enhancements are not required for project completion.
+The public repository must contain clean source code, documented dependencies, sample evidence in `data/`, a comprehensive README, `docs/final_report.pdf`, and `docs/presentation_slides.pdf`. The tool must be tested, demonstrable live in class, and useful even when the AI service is unavailable. Both team members must understand and present meaningful portions. Optional enhancements are not required for project completion.
 

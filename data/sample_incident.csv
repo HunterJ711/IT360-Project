@@ -1,0 +1,11 @@
+timestamp,event_id,computer,user,source_ip,outcome,action,details
+2026-11-10T14:00:00+00:00,4625,WIN-LAB01,jdoe,203.0.113.50,failure,login,Unknown username or bad password
+2026-11-10T14:01:00+00:00,4625,WIN-LAB01,jdoe,203.0.113.50,failure,login,Unknown username or bad password
+2026-11-10T14:02:00+00:00,4625,WIN-LAB01,jdoe,203.0.113.50,failure,login,Unknown username or bad password
+2026-11-10T14:03:00+00:00,4625,WIN-LAB01,jdoe,203.0.113.50,failure,login,Unknown username or bad password
+2026-11-10T14:04:00+00:00,4625,WIN-LAB01,jdoe,203.0.113.50,failure,login,Unknown username or bad password
+2026-11-10T14:05:00+00:00,4624,WIN-LAB01,jdoe,203.0.113.50,success,login,Interactive logon succeeded
+2026-11-10T14:07:00+00:00,4720,WIN-LAB01,backup_admin,203.0.113.50,success,account created,A new local user account was created
+2026-11-10T14:08:00+00:00,4672,WIN-LAB01,backup_admin,203.0.113.50,success,special privileges assigned,Administrative privileges assigned to new logon
+2026-11-10T15:00:00+00:00,4624,WIN-LAB01,labuser,192.0.2.25,success,login,Expected lab login
+

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evitriage"
+version = "0.1.0"
+description = "Evidence-preserving security log triage and incident reporting"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+evitriage = "evitriage.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
