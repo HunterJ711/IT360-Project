@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .ai import AIUnavailable, analyze_with_sushi
 from .detector import detect
 from .evidence import describe_evidence
 from .parser import parse_events
@@ -15,6 +16,7 @@ def build_parser() -> argparse.ArgumentParser:
     analyze = commands.add_parser("analyze", help="Analyze normalized CSV or JSON evidence")
     analyze.add_argument("evidence", help="Path to evidence file")
     analyze.add_argument("--output", "-o", default="reports/evitriage_report.md", help="Markdown report path")
+    analyze.add_argument("--ai", action="store_true", help="Request optional Sushi AI interpretation")
     return parser
 
 
@@ -24,9 +26,16 @@ def main(argv: list[str] | None = None) -> int:
         evidence = describe_evidence(args.evidence)
         events = parse_events(args.evidence)
         findings = detect(events)
+        ai_analysis = None
+        ai_status = None
+        if args.ai:
+            try:
+                ai_analysis = analyze_with_sushi(findings)
+            except AIUnavailable as exc:
+                ai_status = f"AI interpretation unavailable: {exc}. The deterministic report is unaffected."
         output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(generate_report(evidence, events, findings), encoding="utf-8")
+        output.write_text(generate_report(evidence, events, findings, ai_analysis=ai_analysis, ai_status=ai_status), encoding="utf-8")
     except (OSError, ValueError) as exc:
         print(f"EviTriage error: {exc}")
         return 2
