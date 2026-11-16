@@ -65,3 +65,30 @@ The initial brute-force threshold is five failed-login events for the same user 
 - Source logs may be incomplete or inaccurate.
 - AI interpretation, when added, will be advisory and clearly separated from evidence.
 
+
+## Optional Sushi AI integration
+
+The AI component is **advisory only**. Rule-based detection, severity, source
+records, SHA-256 evidence hash, and the event timeline are never changed.
+AI-generated summaries, explanations, and investigative steps are shown in a
+separate report section.
+
+1. Connect to the ISU network or VPN. Obtain authorized API access and a key
+   from your instructor or Sushi administrator.
+2. Set the `SUSHI_API_KEY` environment variable in your terminal. For example,
+   in PowerShell: `$env:SUSHI_API_KEY = "<your-key>"`. Never commit or share keys.
+3. Run `evitriage analyze data/sample_incident.csv --ai --output reports/ai_demo.md`.
+4. The default model is `llama3.1:latest`. Optionally configure `SUSHI_MODEL`.
+
+**API endpoint requires confirmation:** This client currently assumes Sushi
+provides an OpenAI-compatible POST endpoint at
+`http://sushi.it.ilstu.edu:8080/api/chat/completions` using bearer-token
+`Authorization` and an OpenAI-style `choices[0].message.content` response.
+If ISU documents a different endpoint on the same host, set `SUSHI_API_URL`
+to the documented full URL. Never send your key to an unknown host.
+
+If the key, network, API, or AI-generated JSON is unavailable/invalid, EviTriage
+still generates the original deterministic report and labels AI as unavailable.
+Run offline/mock tests with `python -m unittest discover -s tests -v`.
+Only submit authorized or synthetic evidence to external services; event data
+is transmitted to the configured server when `--ai` is enabled.
