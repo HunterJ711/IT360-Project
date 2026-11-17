@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from evitriage.ai import AIUnavailable, analyze_with_sushi, serialize_findings, validate_analysis
+from evitriage.ai import AIUnavailable, analyze_with_sushi, analyze_with_fallback, serialize_findings, validate_analysis
 from evitriage.detector import detect
 from evitriage.evidence import describe_evidence
 from evitriage.parser import parse_events
@@ -84,22 +84,54 @@ class AITests(unittest.TestCase):
         with self.assertRaises(AIUnavailable):
             analyze_with_sushi(sample()[1])
 
+    
     @patch.dict(os.environ, {"SUSHI_API_KEY": ""})
-    def test_cli_falls_back_without_key(self):
+    @patch(
+        "evitriage.ai.analyze_with_ollama",
+        side_effect=AIUnavailable("Ollama unavailable")
+    )
+    def test_cli_falls_back_without_key(self, mock_ollama):
         from tempfile import TemporaryDirectory
+
         with TemporaryDirectory() as folder:
             output = Path(folder) / "report.md"
-            self.assertEqual(main(["analyze", str(PATH), "--ai", "-o", str(output)]), 0)
+
+            self.assertEqual(
+                main(["analyze", str(PATH), "--ai", "-o", str(output)]),
+                0
+            )
+
             report = output.read_text()
+
             self.assertIn("AI interpretation unavailable", report)
             self.assertIn("## Findings", report)
             self.assertIn("## Chronological Timeline", report)
+
+        mock_ollama.assert_called_once()
+
 
     @patch.dict(os.environ, {"SUSHI_API_KEY": "test-only-fake-key"})
     @patch("evitriage.ai.urlopen", side_effect=TimeoutError("request timed out"))
     def test_timeout_falls_back(self, urlopen):
         with self.assertRaises(AIUnavailable):
             analyze_with_sushi(sample()[1])
+
+    
+    @patch("evitriage.ai.analyze_with_ollama")
+    @patch("evitriage.ai.analyze_with_sushi")
+    def test_sushi_fails_ollama_succeeds(
+        self, mock_sushi, mock_ollama
+    ):
+        mock_sushi.side_effect = AIUnavailable("Sushi unavailable")
+        mock_ollama.return_value = "Mock AI analysis"
+
+        analysis, provider = analyze_with_fallback(sample()[1])
+
+        self.assertEqual(analysis, "Mock AI analysis")
+        self.assertEqual(provider, "Ollama (local fallback)")
+        mock_sushi.assert_called_once()
+        mock_ollama.assert_called_once()
+
 
 
 if __name__ == "__main__":
