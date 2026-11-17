@@ -29,7 +29,24 @@ source .venv/bin/activate
 python -m pip install -e .
 ```
 
-On Windows, activate the environment with `.venv\\Scripts\\activate`.
+
+On Windows, activate the virtual environment using:
+
+**Command Prompt (CMD):**
+```cmd
+.venv\Scripts\activate.bat
+```
+
+**PowerShell:**
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Then install EviTriage:
+
+```powershell
+python -m pip install -e .
+```
 
 ## Run the demonstration
 
@@ -66,29 +83,112 @@ The initial brute-force threshold is five failed-login events for the same user 
 - AI interpretation, when added, will be advisory and clearly separated from evidence.
 
 
-## Optional Sushi AI integration
 
-The AI component is **advisory only**. Rule-based detection, severity, source
-records, SHA-256 evidence hash, and the event timeline are never changed.
-AI-generated summaries, explanations, and investigative steps are shown in a
-separate report section.
+## Optional AI Integration — Sushi and Ollama
 
-1. Connect to the ISU network or VPN. Obtain authorized API access and a key
-   from your instructor or Sushi administrator.
-2. Set the `SUSHI_API_KEY` environment variable in your terminal. For example,
-   in PowerShell: `$env:SUSHI_API_KEY = "<your-key>"`. Never commit or share keys.
-3. Run `evitriage analyze data/sample_incident.csv --ai --output reports/ai_demo.md`.
-4. The default model is `llama3.1:latest`. Optionally configure `SUSHI_MODEL`.
+EviTriage supports AI-assisted interpretation of security findings using ISU's Sushi server or a locally hosted Ollama model.
 
-**API endpoint requires confirmation:** This client currently assumes Sushi
-provides an OpenAI-compatible POST endpoint at
-`http://sushi.it.ilstu.edu:8080/api/chat/completions` using bearer-token
-`Authorization` and an OpenAI-style `choices[0].message.content` response.
-If ISU documents a different endpoint on the same host, set `SUSHI_API_URL`
-to the documented full URL. Never send your key to an unknown host.
+The AI generates:
+- A concise incident summary
+- Plain-language explanations for each finding
+- Suggested investigative next steps
 
-If the key, network, API, or AI-generated JSON is unavailable/invalid, EviTriage
-still generates the original deterministic report and labels AI as unavailable.
-Run offline/mock tests with `python -m unittest discover -s tests -v`.
-Only submit authorized or synthetic evidence to external services; event data
-is transmitted to the configured server when `--ai` is enabled.
+AI interpretation is advisory only. It does not modify the original evidence, severity ratings, detection rules, or chronological timeline.
+
+### Supported AI Providers
+
+| Provider | Model | API Endpoint |
+|---|---|---|
+| Sushi (Primary) | `llama3.1:latest` | `http://sushi.it.ilstu.edu:8080/api/chat/completions` |
+| Ollama (Fallback) | `llama3.2:3b` | `http://localhost:11434/v1/chat/completions` |
+
+The Sushi endpoint is currently unverified and requires authorized API access. Ollama has been tested locally on Windows.
+
+### Option 1: Sushi Setup
+
+1. Obtain Sushi access and an API key from ISU.
+2. Connect to the ISU network or VPN.
+3. Set the API key as an environment variable.
+
+PowerShell:
+
+```powershell
+$env:SUSHI_API_KEY = "your-api-key"
+```
+
+Linux:
+
+```bash
+export SUSHI_API_KEY="your-api-key"
+```
+
+Never save API keys in the source code or commit them to GitHub.
+
+
+### Option 2: Ollama Setup (Local AI)
+
+1. Download and install Ollama from https://ollama.com/download.
+2. Open a terminal and download the model:
+
+```bash
+ollama pull llama3.2:3b
+```
+
+3. Verify that the model is installed:
+
+```bash
+ollama list
+```
+
+4. Make sure Ollama is running.
+
+Ollama provides a local API on port 11434 and does not require an API key for local requests.
+
+The model runs on your computer rather than an external AI service. Once downloaded, the model can run without an internet connection.
+
+### Automatic AI Fallback
+
+When AI analysis is enabled, EviTriage:
+
+1. Analyzes the security evidence using deterministic Python detection rules.
+2. Converts the findings and supporting events into JSON.
+3. Attempts AI interpretation using Sushi.
+4. Falls back to local Ollama if Sushi is unavailable or its response is invalid.
+5. Validates the AI response before including it in the report.
+6. Generates the original rule-based report if both AI providers fail.
+
+The generated report identifies which AI provider was used when analysis succeeds.
+
+### Running EviTriage Without AI
+
+```bash
+evitriage analyze data/sample_incident.csv --output reports/demo_offline.md
+```
+
+### Running EviTriage With AI
+
+```bash
+evitriage analyze data/sample_incident.csv --ai --output reports/demo_ai.md
+```
+
+The `--ai` flag enables the Sushi-to-Ollama fallback process.
+
+The `evitriage` command requires installing the project as described in the Setup section.
+
+### Running Automated Tests
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The test suite uses mocked AI responses and does not require an active Sushi connection or Ollama installation.
+
+### AI Limitations
+
+- AI-generated explanations can contain inaccurate or unsupported conclusions.
+- Smaller models may occasionally return invalid or incomplete JSON.
+- The AI only receives detected findings and their supporting events, not the complete original evidence file.
+- AI output requires human review before drawing forensic conclusions.
+- The rule-based detection engine remains functional when AI is unavailable.
+- Only synthetic or authorized security evidence should be submitted to an AI service.
+
