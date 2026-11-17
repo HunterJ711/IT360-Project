@@ -60,6 +60,8 @@ def generate_report(
 
     lines.extend(["## AI Analysis Status", ""])
     if ai_analysis is not None:
+        if ai_status:
+            lines.extend([ai_status, ""])
         lines.extend([
             "**AI interpretation — advisory only; not original evidence.**", "",
             "### AI Incident Summary", "", ai_analysis.incident_summary, "",
